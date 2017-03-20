@@ -17,15 +17,20 @@ import com.bakerj.infinitecards.transformer.DefaultTransformerToFront;
 import com.bakerj.infinitecards.transformer.DefaultZIndexTransformerCommon;
 import com.nineoldandroids.view.ViewHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
     private InfiniteCardView mCardView;
+    private MyAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mCardView = (InfiniteCardView) findViewById(R.id.view);
-        mCardView.setAdapter(new MyAdapter());
+        mCardView.setAdapter(mAdapter = new MyAdapter());
         initButton();
     }
 
@@ -52,6 +57,35 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 next();
+            }
+        });
+        findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Random random = new Random();
+                mAdapter.addColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+        findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAdapter.removeColor();
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+        findViewById(R.id.change).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Random random = new Random();
+                mAdapter.changeColor(random.nextInt(mAdapter.getCount()),
+                        Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+        findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
             }
         });
     }
@@ -154,16 +188,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static class MyAdapter extends BaseAdapter {
-        private int[] colors = {Color.BLACK, Color.RED, Color.BLUE, Color.WHITE, Color.GREEN};
+        private List<Integer> colors = new ArrayList<>();
 
         @Override
         public int getCount() {
-            return colors.length;
+            return colors.size();
         }
 
         @Override
-        public Object getItem(int position) {
-            return null;
+        public Integer getItem(int position) {
+            return colors.get(position);
         }
 
         @Override
@@ -177,8 +211,24 @@ public class MainActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout
                         .item_card, parent, false);
             }
-            convertView.setBackgroundColor(colors[position]);
+            convertView.setBackgroundColor(colors.get(position));
             return convertView;
+        }
+
+        void addColor(int color) {
+            colors.add(color);
+        }
+
+        void removeColor() {
+            if (colors.size() > 0) {
+                colors.remove(0);
+            }
+        }
+
+        void changeColor(int position, int color) {
+            if (colors.size() > position) {
+                colors.set(position, color);
+            }
         }
     }
 }

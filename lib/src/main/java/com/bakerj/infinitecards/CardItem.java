@@ -8,10 +8,12 @@ import android.view.View;
 public class CardItem {
     public View view;
     public float zIndex;
+    int adapterIndex;
 
-    CardItem(View view, float zIndex) {
+    CardItem(View view, float zIndex, int adapterIndex) {
         this.view = view;
         this.zIndex = zIndex;
+        this.adapterIndex = adapterIndex;
     }
 
     @Override

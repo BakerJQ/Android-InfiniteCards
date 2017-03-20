@@ -61,7 +61,7 @@ public class InfiniteCardView extends FrameLayout {
             animDuration = ta.getInt(R.styleable.InfiniteCardView_animDuration, CardAnimationHelper.ANIM_DURATION);
             ta.recycle();
         }
-        mAnimationHelper = new CardAnimationHelper(animType, animDuration);
+        mAnimationHelper = new CardAnimationHelper(animType, animDuration, this);
     }
 
     @Override
@@ -71,23 +71,31 @@ public class InfiniteCardView extends FrameLayout {
             mCardWidth = getMeasuredWidth();
             mCardHeight = (int) (mCardWidth * mCardRatio);
             mAnimationHelper.setCardSize(mCardWidth, mCardHeight);
-            mAnimationHelper.initAdapterView(mAdapter, this);
+            mAnimationHelper.initAdapterView(mAdapter);
         }
     }
 
-    void addCardView(final CardItem card) {
+    void addCardView(CardItem card) {
+        addView(getCardView(card));
+    }
+
+    void addCardView(CardItem card, int position) {
+        addView(getCardView(card), position);
+    }
+
+    private View getCardView(final CardItem card) {
         View view = card.view;
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(mCardWidth,
                 mCardHeight);
         layoutParams.gravity = Gravity.CENTER;
         view.setLayoutParams(layoutParams);
-        addView(view);
         view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 bringCardToFront(card);
             }
         });
+        return view;
     }
 
     private void bringCardToFront(CardItem card) {
@@ -106,10 +114,6 @@ public class InfiniteCardView extends FrameLayout {
         mAnimationHelper.bringCardToFront(position);
     }
 
-    private void notifyDataSetChanged() {
-
-    }
-
     /**
      * set view adapter
      *
@@ -121,10 +125,10 @@ public class InfiniteCardView extends FrameLayout {
         mAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
-                notifyDataSetChanged();
+                mAnimationHelper.notifyDataSetChanged(mAdapter);
             }
         });
-        mAnimationHelper.initAdapterView(mAdapter, this);
+        mAnimationHelper.initAdapterView(mAdapter);
     }
 
     public void setTransformerToFront(AnimationTransformer toFrontTransformer) {

@@ -26,6 +26,8 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     private int mAnimType = InfiniteCardView.ANIM_TYPE_FRONT;
     //animation duration
     private int mAnimDuration = ANIM_DURATION;
+    //card container view
+    private InfiniteCardView mCardView;
     //card item list
     private LinkedList<CardItem> mCards;
     //total card count
@@ -48,10 +50,15 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     private ZIndexTransformer mZIndexTransformerToFront, mZIndexTransformerToBack, mZIndexTransformerCommon;
     //animation interpolator
     private Interpolator mAnimInterpolator;
+    //view adapter needs to be notify while animation
+    private BaseAdapter mTempAdapter;
+    //current animation fraction
+    private float mCurrentFraction = 1;
 
-    public CardAnimationHelper(int mAnimType, int mAnimDuration) {
+    CardAnimationHelper(int mAnimType, int mAnimDuration, InfiniteCardView infiniteCardView) {
         this.mAnimType = mAnimType;
         this.mAnimDuration = mAnimDuration;
+        this.mCardView = infiniteCardView;
         initTransformer();
         initAnimator();
     }
@@ -82,14 +89,14 @@ class CardAnimationHelper implements Animator.AnimatorListener,
      */
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
-        float fraction = (float) animation.getAnimatedValue();
-        float fractionInterpolated = fraction;
+        mCurrentFraction = (float) animation.getAnimatedValue();
+        float fractionInterpolated = mCurrentFraction;
         if (mAnimInterpolator != null) {
-            fractionInterpolated = mAnimInterpolator.getInterpolation(fraction);
+            fractionInterpolated = mAnimInterpolator.getInterpolation(mCurrentFraction);
         }
-        doAnimationBackToFront(fraction, fractionInterpolated);
-        doAnimationFrontToBack(fraction, fractionInterpolated);
-        doAnimationCommon(fraction, fractionInterpolated);
+        doAnimationBackToFront(mCurrentFraction, fractionInterpolated);
+        doAnimationFrontToBack(mCurrentFraction, fractionInterpolated);
+        doAnimationCommon(mCurrentFraction, fractionInterpolated);
         bringToFrontByZIndex();
     }
 
@@ -279,7 +286,7 @@ class CardAnimationHelper implements Animator.AnimatorListener,
 
     @Override
     public void onAnimationStart(Animator animation) {
-
+        mCurrentFraction = 0;
     }
 
     /**
@@ -308,7 +315,11 @@ class CardAnimationHelper implements Animator.AnimatorListener,
         }
         mPositionToFront = 0;
         mPositionToBack = 0;
+        mCurrentFraction = 1;
         mIsAnim = false;
+        if (mTempAdapter != null) {
+            notifyDataSetChanged(mTempAdapter);
+        }
     }
 
     @Override
@@ -321,20 +332,63 @@ class CardAnimationHelper implements Animator.AnimatorListener,
 
     }
 
-    void initAdapterView(BaseAdapter adapter, InfiniteCardView infiniteCardView) {
-        if (mCardWidth > 0 && mCardHeight > 0 && mCards == null) {
-            mCards = new LinkedList<>();
-//            mCards4JudgeZIndex = new ArrayList<>();
-            mCardCount = adapter.getCount();
-            for (int i = mCardCount - 1; i >= 0; i--) {
-                View child = adapter.getView(i, null, infiniteCardView);
-                CardItem cardItem = new CardItem(child, 0);
-                infiniteCardView.addCardView(cardItem);
-                mZIndexTransformerCommon.transformAnimation(cardItem, 1, mCardWidth, mCardHeight, i, i);
-                mTransformerCommon.transformAnimation(child, 1, mCardWidth, mCardHeight, i, i);
-                mCards.addFirst(cardItem);
-//                mCards4JudgeZIndex.add(cardItem);
+    void initAdapterView(BaseAdapter adapter) {
+        if (mCardWidth > 0 && mCardHeight > 0) {
+            if (mCards == null) {
+                mCardView.removeAllViews();
+                firstSetAdapter(adapter);
+            } else {
+                notifySetAdapter(adapter);
             }
+        }
+    }
+
+    private void firstSetAdapter(BaseAdapter adapter) {
+        mCards = new LinkedList<>();
+//            mCards4JudgeZIndex = new ArrayList<>();
+        mCardCount = adapter.getCount();
+        for (int i = mCardCount - 1; i >= 0; i--) {
+            View child = adapter.getView(i, null, mCardView);
+            CardItem cardItem = new CardItem(child, 0, i);
+            mCardView.addCardView(cardItem);
+            mZIndexTransformerCommon.transformAnimation(cardItem, mCurrentFraction, mCardWidth, mCardHeight, i, i);
+            mTransformerCommon.transformAnimation(child, mCurrentFraction, mCardWidth, mCardHeight, i, i);
+            mCards.addFirst(cardItem);
+//                mCards4JudgeZIndex.add(cardItem);
+        }
+    }
+
+    private void notifySetAdapter(BaseAdapter adapter) {
+        mCardCount = adapter.getCount();
+        for (int i = 0; i < mCardCount; i++) {
+            CardItem cardItem = mCards.get(i);
+            View child = adapter.getView(cardItem.adapterIndex, cardItem.view, mCardView);
+            if (child != cardItem.view) {
+                if (cardItem.view != null) {
+                    mCardView.removeView(cardItem.view);
+                }
+                cardItem.view = child;
+                mCardView.addCardView(cardItem, i);
+                mZIndexTransformerCommon.transformAnimation(cardItem, mCurrentFraction, mCardWidth, mCardHeight,
+                        i, i);
+                mTransformerCommon.transformAnimation(child, mCurrentFraction, mCardWidth, mCardHeight, i, i);
+            }
+        }
+        for (int i = mCardCount - 1; i >= 0; i--) {
+            mCards.get(i).view.bringToFront();
+        }
+    }
+
+    void notifyDataSetChanged(BaseAdapter adapter) {
+        if (mIsAnim) {
+            mTempAdapter = adapter;
+        } else {
+            mTempAdapter = null;
+            int adapterItemCount = adapter.getCount();
+            if (mCardCount != adapterItemCount) {
+                mCards = null;
+            }
+            initAdapterView(adapter);
         }
     }
 
