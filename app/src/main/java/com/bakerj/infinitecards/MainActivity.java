@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setStyle1() {
         mCardView.setClickable(true);
-        mCardView.setmAnimType(InfiniteCardView.ANIM_TYPE_FRONT);
+        mCardView.setAnimType(InfiniteCardView.ANIM_TYPE_FRONT);
         mCardView.setAnimInterpolator(new LinearInterpolator());
         mCardView.setTransformerToFront(new DefaultTransformerToFront());
         mCardView.setTransformerToBack(new DefaultTransformerToBack());
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setStyle2() {
         mCardView.setClickable(true);
-        mCardView.setmAnimType(InfiniteCardView.ANIM_TYPE_SWITCH);
+        mCardView.setAnimType(InfiniteCardView.ANIM_TYPE_SWITCH);
         mCardView.setAnimInterpolator(new OvershootInterpolator(-18));
         mCardView.setTransformerToFront(new DefaultTransformerToFront());
         mCardView.setTransformerToBack(new AnimationTransformer() {
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setStyle3() {
         mCardView.setClickable(false);
-        mCardView.setmAnimType(InfiniteCardView.ANIM_TYPE_FRONT_TO_LAST);
+        mCardView.setAnimType(InfiniteCardView.ANIM_TYPE_FRONT_TO_LAST);
         mCardView.setAnimInterpolator(new OvershootInterpolator(-8));
         mCardView.setTransformerToFront(new DefaultCommonTransformer());
         mCardView.setTransformerToBack(new AnimationTransformer() {
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     ViewCompat.setRotationY(view, -45 * fraction);
                 } else {
                     ViewCompat.setTranslationX(view, cardWidth * 1.5f * (1f - fraction));
-                    ViewCompat.setRotationY(view, -45 * (1 -fraction));
+                    ViewCompat.setRotationY(view, -45 * (1 - fraction));
                 }
             }
 
