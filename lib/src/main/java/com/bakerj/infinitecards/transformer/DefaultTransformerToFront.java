@@ -10,23 +10,23 @@ import com.nineoldandroids.view.ViewHelper;
  */
 public class DefaultTransformerToFront implements AnimationTransformer {
     @Override
-    public void transformAnimation(View view, float fraction, int baseWidth, int baseHeight,
+    public void transformAnimation(View view, float fraction, int cardWidth, int cardHeight,
                                    int fromPosition, int toPosition) {
         int positionCount = fromPosition - toPosition;
         ViewHelper.setScaleX(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
         ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
         ViewHelper.setRotationX(view, 180 * (1 - fraction));
         if (fraction < 0.5) {
-            ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition -
-                    baseHeight * fraction);
+            ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition -
+                    cardHeight * fraction);
         } else {
-            ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition -
-                    baseHeight * (1 - fraction) + baseHeight * 0.1f * fraction * positionCount);
+            ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition -
+                    cardHeight * (1 - fraction) + cardHeight * 0.1f * fraction * positionCount);
         }
     }
 
     @Override
-    public void transformInterpolatedAnimation(View view, float fraction, int baseWidth,
-                                               int baseHeight, int fromPosition, int toPosition) {
+    public void transformInterpolatedAnimation(View view, float fraction, int cardWidth,
+                                               int cardHeight, int fromPosition, int toPosition) {
     }
 }

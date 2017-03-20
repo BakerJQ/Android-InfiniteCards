@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         mCardView.setTransformerToFront(new DefaultTransformerToFront());
         mCardView.setTransformerToBack(new AnimationTransformer() {
             @Override
-            public void transformAnimation(View view, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
+            public void transformAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 int positionCount = fromPosition - toPosition;
                 ViewHelper.setScaleX(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
                 ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
@@ -84,15 +84,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void transformInterpolatedAnimation(View view, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
-                ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition + baseHeight
+            public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
+                ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition + cardHeight
                         * 0.1f * fraction * (fromPosition - toPosition));
             }
         });
         mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
             @Override
-            public void transformAnimation(CardItem card, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
-                if (fraction < 0.3f) {
+            public void transformAnimation(CardItem card, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
+                if (fraction < 0.4f) {
                     card.zIndex = 1f + 0.01f * fromPosition;
                 } else {
                     card.zIndex = 1f + 0.01f * toPosition;
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void transformInterpolatedAnimation(CardItem card, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
+            public void transformInterpolatedAnimation(CardItem card, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
 
             }
         });
@@ -113,28 +113,28 @@ public class MainActivity extends AppCompatActivity {
         mCardView.setTransformerToFront(new DefaultCommonTransformer());
         mCardView.setTransformerToBack(new AnimationTransformer() {
             @Override
-            public void transformAnimation(View view, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
+            public void transformAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 int positionCount = fromPosition - toPosition;
                 ViewHelper.setScaleX(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
                 ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
                 if (fraction < 0.5) {
-                    ViewCompat.setTranslationX(view, baseWidth * fraction * 1.5f);
+                    ViewCompat.setTranslationX(view, cardWidth * fraction * 1.5f);
                     ViewCompat.setRotationY(view, -45 * fraction);
                 } else {
-                    ViewCompat.setTranslationX(view, baseWidth * 1.5f * (1f - fraction));
+                    ViewCompat.setTranslationX(view, cardWidth * 1.5f * (1f - fraction));
                     ViewCompat.setRotationY(view, -45 * (1 -fraction));
                 }
             }
 
             @Override
-            public void transformInterpolatedAnimation(View view, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
-                ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition + baseHeight
+            public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
+                ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition + cardHeight
                         * 0.1f * fraction * (fromPosition - toPosition));
             }
         });
         mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
             @Override
-            public void transformAnimation(CardItem card, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
+            public void transformAnimation(CardItem card, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 if (fraction < 0.5f) {
                     card.zIndex = 1f + 0.01f * fromPosition;
                 } else {
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void transformInterpolatedAnimation(CardItem card, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
+            public void transformInterpolatedAnimation(CardItem card, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
 
             }
         });

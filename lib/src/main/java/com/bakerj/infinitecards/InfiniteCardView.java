@@ -1,6 +1,7 @@
 package com.bakerj.infinitecards;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 
+import com.bakerj.infinitecards.lib.R;
 import com.bakerj.infinitecards.transformer.DefaultCommonTransformer;
 import com.bakerj.infinitecards.transformer.DefaultTransformerToBack;
 import com.bakerj.infinitecards.transformer.DefaultTransformerToFront;
@@ -28,22 +30,47 @@ import java.util.LinkedList;
  */
 public class InfiniteCardView extends FrameLayout implements Animator.AnimatorListener,
         ValueAnimator.AnimatorUpdateListener {
+    /*
+     * Three types of animation
+     * ANIM_TYPE_FRONT:custom animation for chosen card, common animation for other cards
+     * ANIM_TYPE_SWITCH:switch the position by custom animation of the first card and the chosen card
+     * ANIM_TYPE_FRONT_TO_LAST:moving the first card to last position by custom animation, common animation for others
+     */
     public static final int ANIM_TYPE_FRONT = 0, ANIM_TYPE_SWITCH = 1, ANIM_TYPE_FRONT_TO_LAST = 2;
-    private static final float CARD_SIZE_FRACTION = 0.5f;
+    //cardHeight / cardWidth = CARD_SIZE_RATIO
+    private static final float CARD_SIZE_RATIO = 0.5f;
+    //animation duration
     private static final int ANIM_DURATION = 1000;
-    private BaseAdapter mAdapter;
-    private LinkedList<CardItem> mCards;
-    //    private ArrayList<CardItem> mCards4JudgeZIndex;
-    private CardItem mCardToBack, mCardToFront;
-    private int mCardCount;
-    private int mPositionToFront = 0, mPositionToBack = 0;
-    private boolean mIsAnim = false;
-    private ValueAnimator mValueAnimator;
-    private AnimationTransformer mTransformerToFront, mTransformerToBack, mTransformerCommon;
-    private ZIndexTransformer mZIndexTransformerToFront, mZIndexTransformerToBack, mZIndexTransformerCommon;
-    private Interpolator mAnimInterpolator;
-    private int mCardBaseWidth, mCardBaseHeight;
+    //animation type
     private int mAnimType = ANIM_TYPE_FRONT;
+    //cardHeight / cardWidth = mCardRatio
+    private float mCardRatio = CARD_SIZE_RATIO;
+    //animation duration
+    private int mAnimDuration = ANIM_DURATION;
+    //view adapter
+    private BaseAdapter mAdapter;
+    //card item list
+    private LinkedList<CardItem> mCards;
+    //total card count
+    private int mCardCount;
+    //card width, card height
+    private int mCardWidth, mCardHeight;
+    //for judge Z index
+    //    private ArrayList<CardItem> mCards4JudgeZIndex;
+    //current card moving to back, current card moving to front
+    private CardItem mCardToBack, mCardToFront;
+    //current card position moving to front, current card position moving to front
+    private int mPositionToBack = 0, mPositionToFront = 0;
+    //is doing animation now
+    private boolean mIsAnim = false;
+    //animator
+    private ValueAnimator mValueAnimator;
+    //custom animation transformer for card moving to front, card moving to back, and common card
+    private AnimationTransformer mTransformerToFront, mTransformerToBack, mTransformerCommon;
+    //custom Z index transformer for card moving to front, card moving to back, and common card
+    private ZIndexTransformer mZIndexTransformerToFront, mZIndexTransformerToBack, mZIndexTransformerCommon;
+    //animation interpolator
+    private Interpolator mAnimInterpolator;
 
     public InfiniteCardView(@NonNull Context context) {
         this(context, null);
@@ -55,6 +82,7 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
 
     public InfiniteCardView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initAttrs(context, attrs);
         setClickable(true);
         mAnimInterpolator = new LinearInterpolator();
         mTransformerToFront = new DefaultTransformerToFront();
@@ -66,12 +94,30 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
         initAnimator();
     }
 
+    private void initAttrs(Context context, AttributeSet attrs) {
+        if (attrs != null) {
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.InfiniteCardView);
+            mAnimType = ta.getInt(R.styleable.InfiniteCardView_animType, ANIM_TYPE_FRONT);
+            mCardRatio = ta.getFloat(R.styleable.InfiniteCardView_cardRatio, CARD_SIZE_RATIO);
+            mAnimDuration = ta.getInt(R.styleable.InfiniteCardView_animDuration, ANIM_DURATION);
+            ta.recycle();
+        }
+    }
+
+    /**
+     * setup animator
+     */
     private void initAnimator() {
-        mValueAnimator = ValueAnimator.ofFloat(0, 1).setDuration(ANIM_DURATION);
+        mValueAnimator = ValueAnimator.ofFloat(0, 1).setDuration(mAnimDuration);
         mValueAnimator.addUpdateListener(this);
         mValueAnimator.addListener(this);
     }
 
+    /**
+     * do animation while update
+     *
+     * @param animation animation
+     */
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         float fraction = (float) animation.getAnimatedValue();
@@ -85,31 +131,49 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
         bringToFrontByZIndex();
     }
 
+    /**
+     * do animation for card moving from back to front
+     *
+     * @param fraction             animation progress from 0.0f to 1.0f
+     * @param fractionInterpolated interpolated animation progress
+     */
     private void doAnimationBackToFront(float fraction, float fractionInterpolated) {
         mTransformerToFront.transformAnimation(mCardToFront.view,
-                fraction, mCardBaseWidth, mCardBaseHeight, mPositionToFront, 0);
+                fraction, mCardWidth, mCardHeight, mPositionToFront, 0);
         if (mAnimInterpolator != null) {
             mTransformerToFront.transformInterpolatedAnimation(mCardToFront.view,
-                    fractionInterpolated, mCardBaseWidth, mCardBaseHeight, mPositionToFront, 0);
+                    fractionInterpolated, mCardWidth, mCardHeight, mPositionToFront, 0);
         }
         doAnimationZIndex(mZIndexTransformerToFront, mCardToFront, fraction, fractionInterpolated,
                 mPositionToFront, 0);
     }
 
+    /**
+     * do animation for card moving from from to back
+     *
+     * @param fraction             animation progress from 0.0f to 1.0f
+     * @param fractionInterpolated interpolated animation progress
+     */
     private void doAnimationFrontToBack(float fraction, float fractionInterpolated) {
         if (mAnimType == ANIM_TYPE_FRONT) {
             return;
         }
-        mTransformerToBack.transformAnimation(mCardToBack.view, fraction, mCardBaseWidth,
-                mCardBaseHeight, 0, mPositionToBack);
+        mTransformerToBack.transformAnimation(mCardToBack.view, fraction, mCardWidth,
+                mCardHeight, 0, mPositionToBack);
         if (mAnimInterpolator != null) {
             mTransformerToBack.transformInterpolatedAnimation(mCardToBack.view,
-                    fractionInterpolated, mCardBaseWidth, mCardBaseHeight, 0, mPositionToBack);
+                    fractionInterpolated, mCardWidth, mCardHeight, 0, mPositionToBack);
         }
         doAnimationZIndex(mZIndexTransformerToBack, mCardToBack, fraction, fractionInterpolated,
                 0, mPositionToBack);
     }
 
+    /**
+     * do animation for common card items
+     *
+     * @param fraction             animation progress from 0.0f to 1.0f
+     * @param fractionInterpolated interpolated animation progress
+     */
     private void doAnimationCommon(float fraction, float fractionInterpolated) {
         if (mAnimType == ANIM_TYPE_FRONT) {
             for (int i = 0; i < mPositionToFront; i++) {
@@ -128,28 +192,55 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
         }
     }
 
+    /**
+     * do animation for common card views
+     *
+     * @param view                 card view
+     * @param fraction             animation progress from 0.0f to 1.0f
+     * @param fractionInterpolated interpolated animation progress
+     * @param fromPosition         card moving from
+     * @param toPosition           card moving to
+     */
     private void doAnimationCommonView(View view, float fraction, float fractionInterpolated, int
             fromPosition, int toPosition) {
-        mTransformerCommon.transformAnimation(view, fraction, mCardBaseWidth,
-                mCardBaseHeight, fromPosition, toPosition);
+        mTransformerCommon.transformAnimation(view, fraction, mCardWidth,
+                mCardHeight, fromPosition, toPosition);
         if (mAnimInterpolator != null) {
-            mTransformerCommon.transformInterpolatedAnimation(view, fractionInterpolated, mCardBaseWidth,
-                    mCardBaseHeight, fromPosition, toPosition);
+            mTransformerCommon.transformInterpolatedAnimation(view, fractionInterpolated, mCardWidth,
+                    mCardHeight, fromPosition, toPosition);
         }
     }
 
+    /**
+     * do calculation for card Z index
+     *
+     * @param transformer          Z index transformer
+     * @param card                 card item
+     * @param fraction             animation progress from 0.0f to 1.0f
+     * @param fractionInterpolated interpolated animation progress
+     * @param fromPosition         card moving from
+     * @param toPosition           card moving to
+     */
     private void doAnimationZIndex(ZIndexTransformer transformer, CardItem card, float fraction,
                                    float fractionInterpolated, int fromPosition, int toPosition) {
-        transformer.transformAnimation(card, fraction, mCardBaseWidth,
-                mCardBaseHeight, fromPosition, toPosition);
+        transformer.transformAnimation(card, fraction, mCardWidth,
+                mCardHeight, fromPosition, toPosition);
         if (mAnimInterpolator != null) {
-            transformer.transformInterpolatedAnimation(card, fractionInterpolated, mCardBaseWidth,
-                    mCardBaseHeight, fromPosition, toPosition);
+            transformer.transformInterpolatedAnimation(card, fractionInterpolated, mCardWidth,
+                    mCardHeight, fromPosition, toPosition);
         }
     }
 
+    /**
+     * bring card to front by Z index, the card with smaller Z index is in front of the card with
+     * bigger Z index
+     */
     private void bringToFrontByZIndex() {
         if (mAnimType == ANIM_TYPE_FRONT) {
+            //if the animation type is ANIM_TYPE_FRONT, which means other cards are under common
+            // animation, so start cycling the card items from the position before the moving
+            // card, and while the moving card's Z index is smaller than an other card, we
+            // call bringToFront for it, otherwise we call bringToFront for other cards
             for (int i = mPositionToFront - 1; i >= 0; i--) {
                 CardItem card = mCards.get(i);
                 if (card.zIndex > mCardToFront.zIndex) {
@@ -159,44 +250,66 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
                 }
             }
         } else {
+            //sort the card items by Z index and call bringToFront foreach view
 //            Collections.sort(mCards4JudgeZIndex, this);
 //            for (int i = mCardCount - 1; i >= 0; i--) {
 //                mCards4JudgeZIndex.get(i).view.bringToFront();
 //            }
-            boolean cardToFrontJudged = false;
+            //##########################for better performance#########################
+            boolean cardToFrontBrought = false;//is card moving to front called bringToFront
+            //cycling the card items
             for (int i = mCardCount - 1; i > 0; i--) {
                 CardItem card = mCards.get(i);
+                //get the card before current card
                 CardItem cardPre = i > 1 ? mCards.get(i - 1) : null;
+                //is card moving to back behind the card before current card
                 boolean cardToBackBehindCardPre = cardPre == null ||
                         mCardToBack.zIndex > cardPre.zIndex;
+                //if the card moving to back Z index is smaller than current card, and is behind
+                // the card before current card, we should call bringToFront for it
                 boolean bringCardToBackViewToFront = mCardToBack.zIndex < card.zIndex && cardToBackBehindCardPre;
+                //is card moving to front behind the current card
                 boolean cardToFrontBehindCardPre = cardPre == null ||
                         mCardToFront.zIndex > cardPre.zIndex;
+                //if the card moving to front Z index is smaller than current card, and is behind
+                // the card before current card, we should call bringToFront for it
                 boolean bringCardToFrontViewToFront = mCardToFront.zIndex < card.zIndex && cardToFrontBehindCardPre;
+                //if current card is not the card moving to front
                 if (i != mPositionToFront) {
+                    //call bringToFront for it
                     card.view.bringToFront();
+                    //if we should bring the card moving to back to front, just do it
                     if (bringCardToBackViewToFront) {
                         mCardToBack.view.bringToFront();
                     }
+                    //if we should bring the card moving to front to front, just do it
                     if (bringCardToFrontViewToFront) {
                         mCardToFront.view.bringToFront();
-                        cardToFrontJudged = true;
+                        cardToFrontBrought = true;
                     }
+                    //if we has both bring the card moving to front and back to front, and the
+                    // card moving to back Z index is smaller than the card moving to front Z
+                    // index, we call bringToFront for the card moving to back
                     if (bringCardToBackViewToFront && bringCardToFrontViewToFront &&
                             mCardToBack.zIndex < mCardToFront.zIndex) {
                         mCardToBack.view.bringToFront();
                     }
                 } else {
+                    //if current card is the card moving to front, and behind the card before
                     if (cardToFrontBehindCardPre) {
                         mCardToFront.view.bringToFront();
-                        cardToFrontJudged = true;
+                        cardToFrontBrought = true;
+                        //if the card moving to back Z index is smaller than the card moving to
+                        // front, call bringToFront for it
                         if (cardToBackBehindCardPre && mCardToBack.zIndex < mCardToFront.zIndex) {
                             mCardToBack.view.bringToFront();
                         }
                     }
                 }
             }
-            if (!cardToFrontJudged) {
+            // it the card moving to front has not call bringToFront yet, which means it is
+            // already in the first position, call bringToFront for it
+            if (!cardToFrontBrought) {
                 mCardToFront.view.bringToFront();
             }
         }
@@ -207,17 +320,25 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
 
     }
 
+    /**
+     * animation end
+     *
+     * @param animation animation
+     */
     @Override
     public void onAnimationEnd(Animator animation) {
         if (mAnimType == ANIM_TYPE_FRONT) {
+            //move the card moving to front to the first position
             mCards.remove(mPositionToFront);
             mCards.addFirst(mCardToFront);
         } else if (mAnimType == ANIM_TYPE_SWITCH) {
+            //switch the position of the card moving to front and back
             mCards.remove(mPositionToFront);
             mCards.removeFirst();
             mCards.addFirst(mCardToFront);
             mCards.add(mPositionToFront, mCardToBack);
         } else {
+            //moving the first position card to last
             mCards.remove(mPositionToFront);
             mCards.removeFirst();
             mCards.addFirst(mCardToFront);
@@ -241,15 +362,15 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (mCardBaseWidth == 0) {
-            mCardBaseWidth = getMeasuredWidth();
-            mCardBaseHeight = (int) (mCardBaseWidth * CARD_SIZE_FRACTION);
+        if (mCardWidth == 0) {
+            mCardWidth = getMeasuredWidth();
+            mCardHeight = (int) (mCardWidth * mCardRatio);
             initAdapterView();
         }
     }
 
     private void initAdapterView() {
-        if (mCardBaseWidth > 0 && mCardBaseHeight > 0 && mCards == null) {
+        if (mCardWidth > 0 && mCardHeight > 0 && mCards == null) {
             mCards = new LinkedList<>();
 //            mCards4JudgeZIndex = new ArrayList<>();
             mCardCount = mAdapter.getCount();
@@ -257,8 +378,8 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
                 View child = mAdapter.getView(i, null, this);
                 CardItem cardItem = new CardItem(child, 0);
                 addCardView(cardItem);
-                mZIndexTransformerCommon.transformAnimation(cardItem, 1, mCardBaseWidth, mCardBaseHeight, i, i);
-                mTransformerCommon.transformAnimation(child, 1, mCardBaseWidth, mCardBaseHeight, i, i);
+                mZIndexTransformerCommon.transformAnimation(cardItem, 1, mCardWidth, mCardHeight, i, i);
+                mTransformerCommon.transformAnimation(child, 1, mCardWidth, mCardHeight, i, i);
                 mCards.addFirst(cardItem);
 //                mCards4JudgeZIndex.add(cardItem);
             }
@@ -267,8 +388,8 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
 
     private void addCardView(final CardItem card) {
         View view = card.view;
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(mCardBaseWidth,
-                mCardBaseHeight);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(mCardWidth,
+                mCardHeight);
         layoutParams.gravity = Gravity.CENTER;
         view.setLayoutParams(layoutParams);
         addView(view);
@@ -289,9 +410,16 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
         bringCardToFront(position);
     }
 
+    /**
+     * bring the specific position card to front
+     *
+     * @param position position
+     */
     public void bringCardToFront(int position) {
         if (position >= 0 && position != mPositionToFront && !mIsAnim) {
             mPositionToFront = position;
+            //if the animation type is not ANIM_TYPE_SWITCH, the card to back post is the last
+            // position
             mPositionToBack = mAnimType == ANIM_TYPE_SWITCH ? mPositionToFront :
                     (mCardCount - 1);
             mCardToBack = mCards.getFirst();
@@ -308,6 +436,11 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
 
     }
 
+    /**
+     * set view adapter
+     *
+     * @param adapter adapter
+     */
     public void setAdapter(BaseAdapter adapter) {
         removeAllViews();
         this.mAdapter = adapter;
