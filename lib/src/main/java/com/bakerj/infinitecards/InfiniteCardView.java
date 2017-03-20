@@ -6,8 +6,8 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.BaseAdapter;
@@ -29,7 +29,7 @@ import java.util.LinkedList;
 public class InfiniteCardView extends FrameLayout implements Animator.AnimatorListener,
         ValueAnimator.AnimatorUpdateListener {
     public static final int ANIM_TYPE_FRONT = 0, ANIM_TYPE_SWITCH = 1, ANIM_TYPE_FRONT_TO_LAST = 2;
-    private static final float CARD_SIZE_FRACTION = 1;
+    private static final float CARD_SIZE_FRACTION = 0.5f;
     private static final int ANIM_DURATION = 1000;
     private BaseAdapter mAdapter;
     private LinkedList<CardItem> mCards;
@@ -267,7 +267,10 @@ public class InfiniteCardView extends FrameLayout implements Animator.AnimatorLi
 
     private void addCardView(final CardItem card) {
         View view = card.view;
-        view.setLayoutParams(new ViewGroup.LayoutParams(mCardBaseWidth, mCardBaseHeight));
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(mCardBaseWidth,
+                mCardBaseHeight);
+        layoutParams.gravity = Gravity.CENTER;
+        view.setLayoutParams(layoutParams);
         addView(view);
         view.setOnClickListener(new OnClickListener() {
             @Override

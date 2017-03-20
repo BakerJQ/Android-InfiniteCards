@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void transformInterpolatedAnimation(View view, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
-                ViewHelper.setTranslationY(view, baseHeight * (0.25f - 0.1f * fromPosition) + baseHeight
+                ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition + baseHeight
                         * 0.1f * fraction * (fromPosition - toPosition));
             }
         });
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void transformInterpolatedAnimation(View view, float fraction, int baseWidth, int baseHeight, int fromPosition, int toPosition) {
-                ViewHelper.setTranslationY(view, baseHeight * (0.25f - 0.1f * fromPosition) + baseHeight
+                ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition + baseHeight
                         * 0.1f * fraction * (fromPosition - toPosition));
             }
         });

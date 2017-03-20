@@ -17,10 +17,10 @@ public class DefaultTransformerToFront implements AnimationTransformer {
         ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
         ViewHelper.setRotationX(view, 180 * (1 - fraction));
         if (fraction < 0.5) {
-            ViewHelper.setTranslationY(view, baseHeight * (0.25f - 0.1f * fromPosition) -
+            ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition -
                     baseHeight * fraction);
         } else {
-            ViewHelper.setTranslationY(view, baseHeight * (0.25f - 0.1f * fromPosition) -
+            ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition -
                     baseHeight * (1 - fraction) + baseHeight * 0.1f * fraction * positionCount);
         }
     }

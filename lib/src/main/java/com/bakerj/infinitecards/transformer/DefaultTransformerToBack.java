@@ -15,7 +15,7 @@ public class DefaultTransformerToBack implements AnimationTransformer {
         int positionCount = fromPosition - toPosition;
         ViewHelper.setScaleX(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
         ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
-        ViewHelper.setTranslationY(view, baseHeight * (0.25f - 0.1f * fromPosition) + baseHeight
+        ViewHelper.setTranslationY(view, -baseHeight * 0.1f * fromPosition + baseHeight
                 * 0.1f * fraction * positionCount);
     }
 
