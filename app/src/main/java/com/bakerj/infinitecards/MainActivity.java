@@ -30,7 +30,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mCardView = (InfiniteCardView) findViewById(R.id.view);
-        mCardView.setAdapter(mAdapter = new MyAdapter());
+        mAdapter = new MyAdapter();
+        mAdapter.addColor(Color.WHITE);
+        mAdapter.addColor(Color.RED);
+        mAdapter.addColor(Color.BLACK);
+        mAdapter.addColor(Color.YELLOW);
+        mAdapter.addColor(Color.CYAN);
+        mCardView.setAdapter(mAdapter);
         initButton();
     }
 
