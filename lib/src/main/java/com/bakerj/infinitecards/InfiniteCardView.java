@@ -54,14 +54,22 @@ public class InfiniteCardView extends FrameLayout {
     private void init(Context context, AttributeSet attrs) {
         int animType = ANIM_TYPE_FRONT;
         int animDuration = CardAnimationHelper.ANIM_DURATION;
+        int animAddRemoveDuration = CardAnimationHelper.ANIM_ADD_REMOVE_DURATION;
+        int animAddRemoveDelay = CardAnimationHelper.ANIM_ADD_REMOVE_DELAY;
         if (attrs != null) {
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.InfiniteCardView);
             animType = ta.getInt(R.styleable.InfiniteCardView_animType, ANIM_TYPE_FRONT);
             mCardRatio = ta.getFloat(R.styleable.InfiniteCardView_cardRatio, CARD_SIZE_RATIO);
             animDuration = ta.getInt(R.styleable.InfiniteCardView_animDuration, CardAnimationHelper.ANIM_DURATION);
+            animAddRemoveDuration = ta.getInt(R.styleable.InfiniteCardView_animAddRemoveDuration,
+                    CardAnimationHelper.ANIM_ADD_REMOVE_DURATION);
+            animAddRemoveDelay = ta.getInt(R.styleable.InfiniteCardView_animAddRemoveDelay,
+                    CardAnimationHelper.ANIM_ADD_REMOVE_DELAY);
             ta.recycle();
         }
         mAnimationHelper = new CardAnimationHelper(animType, animDuration, this);
+        mAnimationHelper.setAnimAddRemoveDuration(animAddRemoveDuration);
+        mAnimationHelper.setAnimAddRemoveDelay(animAddRemoveDelay);
     }
 
     @Override
@@ -128,7 +136,6 @@ public class InfiniteCardView extends FrameLayout {
                 mAnimationHelper.notifyDataSetChanged(mAdapter);
             }
         });
-        mAnimationHelper.initAdapterView(mAdapter);
     }
 
     public void setTransformerToFront(AnimationTransformer toFrontTransformer) {
@@ -165,5 +172,17 @@ public class InfiniteCardView extends FrameLayout {
 
     public void setAnimType(int animType) {
         mAnimationHelper.setAnimType(animType);
+    }
+
+    void setTransformerAnimAdd(AnimationTransformer transformerAnimAdd) {
+        mAnimationHelper.setTransformerAnimAdd(transformerAnimAdd);
+    }
+
+    void setTransformerAnimRemove(AnimationTransformer transformerAnimRemove) {
+        mAnimationHelper.setTransformerAnimRemove(transformerAnimRemove);
+    }
+
+    void setAnimAddRemoveInterpolator(Interpolator animAddRemoveInterpolator) {
+        mAnimationHelper.setAnimAddRemoveInterpolator(animAddRemoveInterpolator);
     }
 }

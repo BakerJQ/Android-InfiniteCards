@@ -8,5 +8,7 @@
         </attr>
         <attr name="cardRatio" format="float"/>
         <attr name="animDuration" format="integer"/>
+        <attr name="animAddRemoveDelay" format="integer"/>
+        <attr name="animAddRemoveDuration" format="integer"/>
     </declare-styleable>
 </resources>

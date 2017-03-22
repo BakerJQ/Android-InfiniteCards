@@ -6,6 +6,8 @@ import android.view.animation.LinearInterpolator;
 import android.widget.BaseAdapter;
 
 import com.bakerj.infinitecards.transformer.DefaultCommonTransformer;
+import com.bakerj.infinitecards.transformer.DefaultTransformerAdd;
+import com.bakerj.infinitecards.transformer.DefaultTransformerRemove;
 import com.bakerj.infinitecards.transformer.DefaultTransformerToBack;
 import com.bakerj.infinitecards.transformer.DefaultTransformerToFront;
 import com.bakerj.infinitecards.transformer.DefaultZIndexTransformerCommon;
@@ -21,11 +23,13 @@ import java.util.LinkedList;
 class CardAnimationHelper implements Animator.AnimatorListener,
         ValueAnimator.AnimatorUpdateListener {
     //animation duration
-    static final int ANIM_DURATION = 1000;
+    static final int ANIM_DURATION = 1000, ANIM_ADD_REMOVE_DELAY = 200,
+            ANIM_ADD_REMOVE_DURATION = 500;
     //animation type
     private int mAnimType = InfiniteCardView.ANIM_TYPE_FRONT;
     //animation duration
-    private int mAnimDuration = ANIM_DURATION;
+    private int mAnimDuration = ANIM_DURATION, mAnimAddRemoveDelay = ANIM_ADD_REMOVE_DELAY,
+            mAnimAddRemoveDuration = ANIM_ADD_REMOVE_DURATION;
     //card container view
     private InfiniteCardView mCardView;
     //card item list
@@ -41,15 +45,17 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     private int mPositionToBack = 0, mPositionToFront = 0;
     private int mCardWidth, mCardHeight;
     //is doing animation now
-    private boolean mIsAnim = false;
+    private boolean mIsAnim = false, mIsAddRemoveAnim = false;
     //animator
     private ValueAnimator mValueAnimator;
     //custom animation transformer for card moving to front, card moving to back, and common card
     private AnimationTransformer mTransformerToFront, mTransformerToBack, mTransformerCommon;
+    //custom animation transformer for card add and remove
+    private AnimationTransformer mTransformerAnimAdd, mTransformerAnimRemove;
     //custom Z index transformer for card moving to front, card moving to back, and common card
     private ZIndexTransformer mZIndexTransformerToFront, mZIndexTransformerToBack, mZIndexTransformerCommon;
     //animation interpolator
-    private Interpolator mAnimInterpolator;
+    private Interpolator mAnimInterpolator, mAnimAddRemoveInterpolator;
     //view adapter needs to be notify while animation
     private BaseAdapter mTempAdapter;
     //current animation fraction
@@ -65,9 +71,12 @@ class CardAnimationHelper implements Animator.AnimatorListener,
 
     private void initTransformer() {
         mAnimInterpolator = new LinearInterpolator();
+        mAnimAddRemoveInterpolator = new LinearInterpolator();
         mTransformerToFront = new DefaultTransformerToFront();
         mTransformerToBack = new DefaultTransformerToBack();
         mTransformerCommon = new DefaultCommonTransformer();
+        mTransformerAnimAdd = new DefaultTransformerAdd();
+        mTransformerAnimRemove = new DefaultTransformerRemove();
         mZIndexTransformerToFront = new DefaultZIndexTransformerToFront();
         mZIndexTransformerToBack = new DefaultZIndexTransformerCommon();
         mZIndexTransformerCommon = new DefaultZIndexTransformerCommon();
@@ -332,18 +341,106 @@ class CardAnimationHelper implements Animator.AnimatorListener,
 
     }
 
+    /**
+     * init adapter view
+     *
+     * @param adapter adapter
+     */
     void initAdapterView(BaseAdapter adapter) {
         if (mCardWidth > 0 && mCardHeight > 0) {
             if (mCards == null) {
                 mCardView.removeAllViews();
                 firstSetAdapter(adapter);
+            } else if (mCards.size() != adapter.getCount()) {
+                resetAdapter(adapter);
             } else {
                 notifySetAdapter(adapter);
             }
         }
     }
 
+    /**
+     * reset adapter view
+     *
+     * @param adapter adapter
+     */
+    private void resetAdapter(BaseAdapter adapter) {
+        if (mTransformerAnimRemove == null) {
+            mCardView.removeAllViews();
+            initAdapterView(adapter);
+        } else {
+            mIsAddRemoveAnim = true;
+            for (int i = 0; i < mCardCount; i++) {
+                CardItem cardItem = mCards.get(i);
+                showAnimRemove(cardItem.view, mAnimAddRemoveDelay * i, i, i == mCardCount - 1, adapter);
+            }
+        }
+    }
+
+    private void showAnimRemove(final View view, int delay, final int position,
+                                final boolean isLast, final BaseAdapter adapter) {
+        final ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1).setDuration(mAnimAddRemoveDuration);
+        valueAnimator.setStartDelay(delay);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float fraction = (float) animation.getAnimatedValue();
+                mTransformerAnimRemove.transformAnimation(view, fraction, mCardWidth, mCardHeight,
+                        position, position);
+                if (mAnimAddRemoveInterpolator != null) {
+                    mTransformerAnimRemove.transformInterpolatedAnimation(view,
+                            mAnimAddRemoveInterpolator.getInterpolation(fraction),
+                            mCardWidth, mCardHeight, position, position);
+                }
+            }
+        });
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setVisibility(View.GONE);
+                if (isLast) {
+                    mIsAddRemoveAnim = false;
+                    mCardView.removeAllViews();
+                    if (mTempAdapter != null) {
+                        notifyDataSetChanged(mTempAdapter);
+                    } else {
+                        firstSetAdapter(adapter);
+                    }
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        mCardView.post(new Runnable() {
+            @Override
+            public void run() {
+                valueAnimator.start();
+            }
+        });
+    }
+
+    /**
+     * first time set an adapter
+     *
+     * @param adapter adapter
+     */
     private void firstSetAdapter(BaseAdapter adapter) {
+        if (mTransformerAnimAdd != null) {
+            mIsAddRemoveAnim = true;
+        }
         mCards = new LinkedList<>();
 //            mCards4JudgeZIndex = new ArrayList<>();
         mCardCount = adapter.getCount();
@@ -355,9 +452,69 @@ class CardAnimationHelper implements Animator.AnimatorListener,
             mTransformerCommon.transformAnimation(child, mCurrentFraction, mCardWidth, mCardHeight, i, i);
             mCards.addFirst(cardItem);
 //                mCards4JudgeZIndex.add(cardItem);
+            child.setVisibility(View.INVISIBLE);
+            showAnimAdd(child, i * mAnimAddRemoveDelay, i, i == mCardCount - 1);
         }
     }
 
+    private void showAnimAdd(final View view, int delay, final int position, final boolean isLast) {
+        if (mTransformerAnimAdd == null) {
+            return;
+        }
+        final ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1).setDuration(mAnimAddRemoveDuration);
+        valueAnimator.setStartDelay(delay);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float fraction = (float) animation.getAnimatedValue();
+                mTransformerAnimAdd.transformAnimation(view, fraction, mCardWidth, mCardHeight,
+                        position, position);
+                if (mAnimAddRemoveInterpolator != null) {
+                    mTransformerAnimAdd.transformInterpolatedAnimation(view,
+                            mAnimAddRemoveInterpolator.getInterpolation(fraction),
+                            mCardWidth, mCardHeight, position, position);
+                }
+            }
+        });
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (isLast) {
+                    mIsAddRemoveAnim = false;
+                    if (mTempAdapter != null) {
+                        notifyDataSetChanged(mTempAdapter);
+                    }
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        mCardView.post(new Runnable() {
+            @Override
+            public void run() {
+                valueAnimator.start();
+            }
+        });
+    }
+
+    /**
+     * notify
+     *
+     * @param adapter adapter
+     */
     private void notifySetAdapter(BaseAdapter adapter) {
         mCardCount = adapter.getCount();
         for (int i = 0; i < mCardCount; i++) {
@@ -380,14 +537,10 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     }
 
     void notifyDataSetChanged(BaseAdapter adapter) {
-        if (mIsAnim) {
+        if (mIsAnim || mIsAddRemoveAnim) {
             mTempAdapter = adapter;
         } else {
             mTempAdapter = null;
-            int adapterItemCount = adapter.getCount();
-            if (mCardCount != adapterItemCount) {
-                mCards = null;
-            }
             initAdapterView(adapter);
         }
     }
@@ -407,7 +560,7 @@ class CardAnimationHelper implements Animator.AnimatorListener,
      * @param position position
      */
     void bringCardToFront(int position) {
-        if (position >= 0 && position != mPositionToFront && !mIsAnim) {
+        if (position >= 0 && position != mPositionToFront && !mIsAnim && !mIsAddRemoveAnim) {
             mPositionToFront = position;
             //if the animation type is not ANIM_TYPE_SWITCH, the card to back post is the last
             // position
@@ -467,5 +620,25 @@ class CardAnimationHelper implements Animator.AnimatorListener,
 
     void setAnimType(int animType) {
         this.mAnimType = animType;
+    }
+
+    void setTransformerAnimAdd(AnimationTransformer transformerAnimAdd) {
+        this.mTransformerAnimAdd = transformerAnimAdd;
+    }
+
+    void setTransformerAnimRemove(AnimationTransformer transformerAnimRemove) {
+        this.mTransformerAnimRemove = transformerAnimRemove;
+    }
+
+    void setAnimAddRemoveInterpolator(Interpolator animAddRemoveInterpolator) {
+        this.mAnimAddRemoveInterpolator = animAddRemoveInterpolator;
+    }
+
+    void setAnimAddRemoveDelay(int animAddRemoveDelay) {
+        this.mAnimAddRemoveDelay = animAddRemoveDelay;
+    }
+
+    void setAnimAddRemoveDuration(int animAddRemoveDuration) {
+        this.mAnimAddRemoveDuration = animAddRemoveDuration;
     }
 }
