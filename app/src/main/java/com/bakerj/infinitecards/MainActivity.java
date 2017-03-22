@@ -41,57 +41,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initButton() {
-        findViewById(R.id.style1).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.pre).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setStyle1();
-            }
-        });
-        findViewById(R.id.style2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setStyle2();
-            }
-        });
-        findViewById(R.id.style3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setStyle3();
+                mCardView.bringCardToFront(mAdapter.getCount() - 1);
             }
         });
         findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                next();
-            }
-        });
-        findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Random random = new Random();
-                mAdapter.addColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-        findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.removeColor();
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-        findViewById(R.id.change).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Random random = new Random();
-                mAdapter.changeColor(random.nextInt(mAdapter.getCount()),
-                        Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-        findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                setStyle3();
+                mCardView.bringCardToFront(1);
             }
         });
     }
@@ -125,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
-                ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition + cardHeight
-                        * 0.1f * fraction * (fromPosition - toPosition));
+                ViewHelper.setTranslationY(view, -cardWidth * 0.8f * 0.08f * fromPosition +
+                        cardWidth * 0.8f * 0.08f * fraction * (fromPosition - toPosition));
             }
         });
         mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
@@ -168,8 +129,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
-                ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition + cardHeight
-                        * 0.1f * fraction * (fromPosition - toPosition));
+                ViewHelper.setTranslationY(view, -cardWidth * 0.8f * 0.08f * fromPosition +
+                        cardWidth * 0.8f * 0.08f * fraction * (fromPosition - toPosition));
             }
         });
         mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
@@ -187,10 +148,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void next() {
-        mCardView.bringCardToFront(1);
     }
 
     private static class MyAdapter extends BaseAdapter {

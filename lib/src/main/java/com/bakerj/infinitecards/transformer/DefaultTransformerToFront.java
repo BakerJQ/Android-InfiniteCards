@@ -17,11 +17,12 @@ public class DefaultTransformerToFront implements AnimationTransformer {
         ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
         ViewHelper.setRotationX(view, 180 * (1 - fraction));
         if (fraction < 0.5) {
-            ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition -
+            ViewHelper.setTranslationY(view, -cardWidth * 0.8f * 0.08f * fromPosition -
                     cardHeight * fraction);
         } else {
-            ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition -
-                    cardHeight * (1 - fraction) + cardHeight * 0.1f * fraction * positionCount);
+            ViewHelper.setTranslationY(view, -cardWidth * 0.8f * 0.08f * fromPosition -
+                    cardHeight * (1 - fraction) + cardWidth * 0.8f * 0.08f * fraction *
+                    positionCount);
         }
     }
 

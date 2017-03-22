@@ -587,58 +587,100 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     }
 
     void setTransformerToFront(AnimationTransformer toFrontTransformer) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mTransformerToFront = toFrontTransformer;
     }
 
     void setTransformerToBack(AnimationTransformer toBackTransformer) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mTransformerToBack = toBackTransformer;
     }
 
     void setCommonSwitchTransformer(AnimationTransformer commonTransformer) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mTransformerCommon = commonTransformer;
     }
 
     void setTransformerCommon(AnimationTransformer transformerCommon) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mTransformerCommon = transformerCommon;
     }
 
     void setZIndexTransformerToFront(ZIndexTransformer zIndexTransformerToFront) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mZIndexTransformerToFront = zIndexTransformerToFront;
     }
 
     void setZIndexTransformerToBack(ZIndexTransformer zIndexTransformerToBack) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mZIndexTransformerToBack = zIndexTransformerToBack;
     }
 
     void setZIndexTransformerCommon(ZIndexTransformer zIndexTransformerCommon) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mZIndexTransformerCommon = zIndexTransformerCommon;
     }
 
     void setAnimInterpolator(Interpolator animInterpolator) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mAnimInterpolator = animInterpolator;
     }
 
     void setAnimType(int animType) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mAnimType = animType;
     }
 
     void setTransformerAnimAdd(AnimationTransformer transformerAnimAdd) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mTransformerAnimAdd = transformerAnimAdd;
     }
 
     void setTransformerAnimRemove(AnimationTransformer transformerAnimRemove) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mTransformerAnimRemove = transformerAnimRemove;
     }
 
     void setAnimAddRemoveInterpolator(Interpolator animAddRemoveInterpolator) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mAnimAddRemoveInterpolator = animAddRemoveInterpolator;
     }
 
     void setAnimAddRemoveDelay(int animAddRemoveDelay) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mAnimAddRemoveDelay = animAddRemoveDelay;
     }
 
     void setAnimAddRemoveDuration(int animAddRemoveDuration) {
+        if(mIsAnim || mIsAddRemoveAnim){
+            return;
+        }
         this.mAnimAddRemoveDuration = animAddRemoveDuration;
     }
 }

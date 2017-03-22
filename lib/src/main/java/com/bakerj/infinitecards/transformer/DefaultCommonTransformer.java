@@ -14,8 +14,8 @@ public class DefaultCommonTransformer implements AnimationTransformer {
         int positionCount = fromPosition - toPosition;
         ViewHelper.setScaleX(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
         ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
-        ViewHelper.setTranslationY(view, -cardHeight * 0.1f * fromPosition + cardHeight
-                * 0.1f * fraction * positionCount);
+        ViewHelper.setTranslationY(view, -cardWidth * 0.8f * 0.08f * fromPosition + cardWidth
+                * 0.8f * 0.08f * fraction * positionCount);
     }
 
     @Override
