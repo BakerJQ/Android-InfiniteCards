@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static class MyAdapter extends BaseAdapter {
-        private int[] colors = {Color.WHITE, Color.RED, Color.BLACK, Color.CYAN, Color.YELLOW};
+        private int[] colors = {Color.BLUE, Color.RED, Color.BLACK, Color.CYAN, Color.YELLOW};
 
         @Override
         public int getCount() {
