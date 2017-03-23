@@ -346,12 +346,12 @@ class CardAnimationHelper implements Animator.AnimatorListener,
      *
      * @param adapter adapter
      */
-    void initAdapterView(BaseAdapter adapter) {
+    void initAdapterView(BaseAdapter adapter, boolean reset) {
         if (mCardWidth > 0 && mCardHeight > 0) {
             if (mCards == null) {
                 mCardView.removeAllViews();
                 firstSetAdapter(adapter);
-            } else if (mCards.size() != adapter.getCount()) {
+            } else if (reset || mCards.size() != adapter.getCount()) {
                 resetAdapter(adapter);
             } else {
                 notifySetAdapter(adapter);
@@ -367,7 +367,7 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     private void resetAdapter(BaseAdapter adapter) {
         if (mTransformerAnimRemove == null) {
             mCardView.removeAllViews();
-            initAdapterView(adapter);
+            firstSetAdapter(adapter);
         } else {
             mIsAddRemoveAnim = true;
             for (int i = 0; i < mCardCount; i++) {
@@ -541,7 +541,7 @@ class CardAnimationHelper implements Animator.AnimatorListener,
             mTempAdapter = adapter;
         } else {
             mTempAdapter = null;
-            initAdapterView(adapter);
+            initAdapterView(adapter, false);
         }
     }
 

@@ -19,24 +19,18 @@ import com.nineoldandroids.view.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     private InfiniteCardView mCardView;
-    private MyAdapter mAdapter;
+    private BaseAdapter mAdapter1, mAdapter2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mCardView = (InfiniteCardView) findViewById(R.id.view);
-        mAdapter = new MyAdapter();
-        mAdapter.addColor(Color.WHITE);
-        mAdapter.addColor(Color.RED);
-        mAdapter.addColor(Color.BLACK);
-        mAdapter.addColor(Color.YELLOW);
-        mAdapter.addColor(Color.CYAN);
-        mCardView.setAdapter(mAdapter);
+        mAdapter1 = new MyAdapter();
+        mCardView.setAdapter(mAdapter1);
         initButton();
     }
 
@@ -45,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setStyle1();
-                mCardView.bringCardToFront(mAdapter.getCount() - 1);
+                mCardView.bringCardToFront(mAdapter1.getCount() - 1);
             }
         });
         findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
@@ -151,16 +145,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static class MyAdapter extends BaseAdapter {
-        private List<Integer> colors = new ArrayList<>();
+        private int[] colors = {Color.WHITE, Color.RED, Color.BLACK, Color.CYAN, Color.YELLOW};
 
         @Override
         public int getCount() {
-            return colors.size();
+            return colors.length;
         }
 
         @Override
         public Integer getItem(int position) {
-            return colors.get(position);
+            return colors[position];
         }
 
         @Override
@@ -174,24 +168,8 @@ public class MainActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout
                         .item_card, parent, false);
             }
-            convertView.setBackgroundColor(colors.get(position));
+            convertView.setBackgroundColor(colors[position]);
             return convertView;
-        }
-
-        void addColor(int color) {
-            colors.add(color);
-        }
-
-        void removeColor() {
-            if (colors.size() > 0) {
-                colors.remove(0);
-            }
-        }
-
-        void changeColor(int position, int color) {
-            if (colors.size() > position) {
-                colors.set(position, color);
-            }
         }
     }
 }

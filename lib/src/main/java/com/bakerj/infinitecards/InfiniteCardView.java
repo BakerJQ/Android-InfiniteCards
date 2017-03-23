@@ -79,7 +79,7 @@ public class InfiniteCardView extends FrameLayout {
             mCardWidth = getMeasuredWidth();
             mCardHeight = (int) (mCardWidth * mCardRatio);
             mAnimationHelper.setCardSize(mCardWidth, mCardHeight);
-            mAnimationHelper.initAdapterView(mAdapter);
+            mAnimationHelper.initAdapterView(mAdapter, true);
         }
     }
 
@@ -128,7 +128,6 @@ public class InfiniteCardView extends FrameLayout {
      * @param adapter adapter
      */
     public void setAdapter(BaseAdapter adapter) {
-        removeAllViews();
         this.mAdapter = adapter;
         mAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -136,6 +135,7 @@ public class InfiniteCardView extends FrameLayout {
                 mAnimationHelper.notifyDataSetChanged(mAdapter);
             }
         });
+        mAnimationHelper.initAdapterView(adapter, true);
     }
 
     public void setTransformerToFront(AnimationTransformer toFrontTransformer) {
