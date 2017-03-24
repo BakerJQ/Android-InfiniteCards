@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         infiniteCard:animDuration="1000"
-        infiniteCard:cardRatio="0.7"/>
+        infiniteCard:cardRatio="1.3"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -25,6 +25,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="pre"/>
+
+        <Button
+            android:id="@+id/change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="change"/>
 
         <Button
             android:id="@+id/next"

@@ -76,11 +76,15 @@ public class InfiniteCardView extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (mCardWidth == 0 || mCardHeight == 0) {
-            mCardWidth = getMeasuredWidth();
-            mCardHeight = (int) (mCardWidth * mCardRatio);
-            mAnimationHelper.setCardSize(mCardWidth, mCardHeight);
-            mAnimationHelper.initAdapterView(mAdapter, true);
+            setCardSize(true);
         }
+    }
+
+    private void setCardSize(boolean resetAdapter) {
+        mCardWidth = getMeasuredWidth();
+        mCardHeight = (int) (mCardWidth * mCardRatio);
+        mAnimationHelper.setCardSize(mCardWidth, mCardHeight);
+        mAnimationHelper.initAdapterView(mAdapter, resetAdapter);
     }
 
     void addCardView(CardItem card) {
@@ -184,5 +188,14 @@ public class InfiniteCardView extends FrameLayout {
 
     void setAnimAddRemoveInterpolator(Interpolator animAddRemoveInterpolator) {
         mAnimationHelper.setAnimAddRemoveInterpolator(animAddRemoveInterpolator);
+    }
+
+    public void setCardSizeRatio(float cardSizeRatio) {
+        this.mCardRatio = cardSizeRatio;
+        setCardSize(false);
+    }
+
+    public boolean isAnimating() {
+        return mAnimationHelper.isAnimating();
     }
 }

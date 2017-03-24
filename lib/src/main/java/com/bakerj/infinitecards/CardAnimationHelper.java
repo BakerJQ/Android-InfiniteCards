@@ -683,4 +683,8 @@ class CardAnimationHelper implements Animator.AnimatorListener,
         }
         this.mAnimAddRemoveDuration = animAddRemoveDuration;
     }
+
+    boolean isAnimating(){
+        return mIsAnim || mIsAddRemoveAnim;
+    }
 }

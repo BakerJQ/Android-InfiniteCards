@@ -1,6 +1,5 @@
 package com.bakerj.infinitecards;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,19 +16,22 @@ import com.bakerj.infinitecards.transformer.DefaultTransformerToFront;
 import com.bakerj.infinitecards.transformer.DefaultZIndexTransformerCommon;
 import com.nineoldandroids.view.ViewHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
     private InfiniteCardView mCardView;
     private BaseAdapter mAdapter1, mAdapter2;
+    private int[] resId1 = {R.mipmap.style1_1, R.mipmap.style1_2, R.mipmap.style1_3, R.mipmap
+            .style1_4, R.mipmap.style1_5};
+    private int[] resId2 = {R.mipmap.style2_1, R.mipmap.style2_2, R.mipmap.style2_3, R.mipmap
+            .style2_4, R.mipmap.style2_5};
+    private boolean mIsAdapter1 = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mCardView = (InfiniteCardView) findViewById(R.id.view);
-        mAdapter1 = new MyAdapter();
+        mAdapter1 = new MyAdapter(resId1);
+        mAdapter2 = new MyAdapter(resId2);
         mCardView.setAdapter(mAdapter1);
         initButton();
     }
@@ -38,15 +40,42 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.pre).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setStyle1();
-                mCardView.bringCardToFront(mAdapter1.getCount() - 1);
+                if (mIsAdapter1) {
+                    setStyle2();
+                    mCardView.bringCardToFront(mAdapter1.getCount() - 1);
+                } else {
+                    setStyle1();
+                    mCardView.bringCardToFront(mAdapter2.getCount() - 1);
+                }
             }
         });
         findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setStyle3();
+                if (mIsAdapter1) {
+                    setStyle2();
+                } else {
+                    setStyle3();
+                }
                 mCardView.bringCardToFront(1);
+            }
+        });
+        findViewById(R.id.change).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCardView.isAnimating()) {
+                    return;
+                }
+                mIsAdapter1 = !mIsAdapter1;
+                if (mIsAdapter1) {
+                    setStyle2();
+                    mCardView.setCardSizeRatio(1.3f);
+                    mCardView.setAdapter(mAdapter1);
+                } else {
+                    setStyle1();
+                    mCardView.setCardSizeRatio(1);
+                    mCardView.setAdapter(mAdapter2);
+                }
             }
         });
     }
@@ -69,8 +98,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void transformAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 int positionCount = fromPosition - toPosition;
-                ViewHelper.setScaleX(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
-                ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
+                float scale = (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount);
+                ViewHelper.setScaleX(view, scale);
+                ViewHelper.setScaleY(view, scale);
                 if (fraction < 0.5) {
                     ViewCompat.setRotationX(view, 180 * fraction);
                 } else {
@@ -80,8 +110,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
-                ViewHelper.setTranslationY(view, -cardWidth * 0.8f * 0.08f * fromPosition +
-                        cardWidth * 0.8f * 0.08f * fraction * (fromPosition - toPosition));
+                int positionCount = fromPosition - toPosition;
+                float scale = (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount);
+                ViewHelper.setTranslationY(view, -cardHeight * (0.8f - scale) * 0.5f - cardWidth * (0.02f *
+                        fromPosition - 0.02f * fraction * positionCount));
             }
         });
         mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
@@ -110,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void transformAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 int positionCount = fromPosition - toPosition;
-                ViewHelper.setScaleX(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
-                ViewHelper.setScaleY(view, (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount));
+                float scale = (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount);
+                ViewHelper.setScaleX(view, scale);
+                ViewHelper.setScaleY(view, scale);
                 if (fraction < 0.5) {
                     ViewCompat.setTranslationX(view, cardWidth * fraction * 1.5f);
                     ViewCompat.setRotationY(view, -45 * fraction);
@@ -123,8 +156,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
-                ViewHelper.setTranslationY(view, -cardWidth * 0.8f * 0.08f * fromPosition +
-                        cardWidth * 0.8f * 0.08f * fraction * (fromPosition - toPosition));
+                int positionCount = fromPosition - toPosition;
+                float scale = (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount);
+                ViewHelper.setTranslationY(view, -cardHeight * (0.8f - scale) * 0.5f - cardWidth * (0.02f *
+                        fromPosition - 0.02f * fraction * positionCount));
             }
         });
         mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
@@ -145,16 +180,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static class MyAdapter extends BaseAdapter {
-        private int[] colors = {Color.BLUE, Color.RED, Color.BLACK, Color.CYAN, Color.YELLOW};
+        private int[] resIds = {};
+
+        MyAdapter(int[] resIds) {
+            this.resIds = resIds;
+        }
 
         @Override
         public int getCount() {
-            return colors.length;
+            return resIds.length;
         }
 
         @Override
         public Integer getItem(int position) {
-            return colors[position];
+            return resIds[position];
         }
 
         @Override
@@ -168,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout
                         .item_card, parent, false);
             }
-            convertView.setBackgroundColor(colors[position]);
+            convertView.setBackgroundResource(resIds[position]);
             return convertView;
         }
     }
