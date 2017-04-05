@@ -19,10 +19,8 @@ import com.nineoldandroids.view.ViewHelper;
 public class MainActivity extends AppCompatActivity {
     private InfiniteCardView mCardView;
     private BaseAdapter mAdapter1, mAdapter2;
-    private int[] resId1 = {R.mipmap.style1_1, R.mipmap.style1_2, R.mipmap.style1_3, R.mipmap
-            .style1_4, R.mipmap.style1_5};
-    private int[] resId2 = {R.mipmap.style2_1, R.mipmap.style2_2, R.mipmap.style2_3, R.mipmap
-            .style2_4, R.mipmap.style2_5};
+    private int[] resId = {R.mipmap.pic1, R.mipmap.pic2, R.mipmap.pic3, R.mipmap
+            .pic4, R.mipmap.pic5};
     private boolean mIsAdapter1 = true;
 
     @Override
@@ -30,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mCardView = (InfiniteCardView) findViewById(R.id.view);
-        mAdapter1 = new MyAdapter(resId1);
-        mAdapter2 = new MyAdapter(resId2);
+        mAdapter1 = new MyAdapter(resId);
+        mAdapter2 = new MyAdapter(resId);
         mCardView.setAdapter(mAdapter1);
         initButton();
     }
@@ -69,11 +67,9 @@ public class MainActivity extends AppCompatActivity {
                 mIsAdapter1 = !mIsAdapter1;
                 if (mIsAdapter1) {
                     setStyle2();
-                    mCardView.setCardSizeRatio(1.3f);
                     mCardView.setAdapter(mAdapter1);
                 } else {
                     setStyle1();
-                    mCardView.setCardSizeRatio(1);
                     mCardView.setAdapter(mAdapter2);
                 }
             }

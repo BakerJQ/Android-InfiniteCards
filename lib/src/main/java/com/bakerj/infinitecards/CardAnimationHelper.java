@@ -223,8 +223,10 @@ class CardAnimationHelper implements Animator.AnimatorListener,
                 CardItem card = mCards.get(i);
                 if (card.zIndex > mCardToFront.zIndex) {
                     mCardToFront.view.bringToFront();
+                    mCardView.updateViewLayout(mCardToFront.view, mCardToFront.view.getLayoutParams());
                 } else {
                     card.view.bringToFront();
+                    mCardView.updateViewLayout(card.view, card.view.getLayoutParams());
                 }
             }
         } else {
@@ -256,13 +258,16 @@ class CardAnimationHelper implements Animator.AnimatorListener,
                 if (i != mPositionToFront) {
                     //call bringToFront for it
                     card.view.bringToFront();
+                    mCardView.updateViewLayout(card.view, card.view.getLayoutParams());
                     //if we should bring the card moving to back to front, just do it
                     if (bringCardToBackViewToFront) {
                         mCardToBack.view.bringToFront();
+                        mCardView.updateViewLayout(mCardToBack.view, mCardToBack.view.getLayoutParams());
                     }
                     //if we should bring the card moving to front to front, just do it
                     if (bringCardToFrontViewToFront) {
                         mCardToFront.view.bringToFront();
+                        mCardView.updateViewLayout(mCardToFront.view, mCardToFront.view.getLayoutParams());
                         cardToFrontBrought = true;
                     }
                     //if we has both bring the card moving to front and back to front, and the
@@ -271,16 +276,19 @@ class CardAnimationHelper implements Animator.AnimatorListener,
                     if (bringCardToBackViewToFront && bringCardToFrontViewToFront &&
                             mCardToBack.zIndex < mCardToFront.zIndex) {
                         mCardToBack.view.bringToFront();
+                        mCardView.updateViewLayout(mCardToBack.view, mCardToBack.view.getLayoutParams());
                     }
                 } else {
                     //if current card is the card moving to front, and behind the card before
                     if (cardToFrontBehindCardPre) {
                         mCardToFront.view.bringToFront();
+                        mCardView.updateViewLayout(mCardToFront.view, mCardToFront.view.getLayoutParams());
                         cardToFrontBrought = true;
                         //if the card moving to back Z index is smaller than the card moving to
                         // front, call bringToFront for it
                         if (cardToBackBehindCardPre && mCardToBack.zIndex < mCardToFront.zIndex) {
                             mCardToBack.view.bringToFront();
+                            mCardView.updateViewLayout(mCardToBack.view, mCardToBack.view.getLayoutParams());
                         }
                     }
                 }
@@ -289,6 +297,7 @@ class CardAnimationHelper implements Animator.AnimatorListener,
             // already in the first position, call bringToFront for it
             if (!cardToFrontBrought) {
                 mCardToFront.view.bringToFront();
+                mCardView.updateViewLayout(mCardToFront.view, mCardToFront.view.getLayoutParams());
             }
         }
     }
@@ -533,6 +542,7 @@ class CardAnimationHelper implements Animator.AnimatorListener,
         }
         for (int i = mCardCount - 1; i >= 0; i--) {
             mCards.get(i).view.bringToFront();
+            mCardView.updateViewLayout(mCards.get(i).view, mCards.get(i).view.getLayoutParams());
         }
     }
 
