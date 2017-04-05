@@ -1,6 +1,5 @@
 # InfiniteCards
-Card UI
-Switching cards by custom animation
+An infinite card switching UI for Android, support custom animation
 
 ## Screenshot
 ![](./screenshot/sample.gif)
