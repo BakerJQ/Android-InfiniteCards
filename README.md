@@ -1,5 +1,6 @@
 # InfiniteCards
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+
 An infinite card switching UI for Android, support custom animation
 
 ## Screenshot
@@ -7,7 +8,7 @@ An infinite card switching UI for Android, support custom animation
 
 ## Gradle via JCenter
 ``` groovy
-compile 'com.alibaba:fastjson:1.2.31'
+compile 'com.bakerj:infinite-cards:1.0.0'
 ```
 
 ## Attrs
