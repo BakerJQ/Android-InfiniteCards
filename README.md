@@ -30,8 +30,17 @@ compile 'com.bakerj:infinite-cards:1.0.0'
         android:layout_height="match_parent"
         infiniteCard:animDuration="1000"
         infiniteCard:cardRatio="1"/>
-```
 
+```
+###Set Adapter
+Just extends the BaseAdapter
+```java
+class MyAdapter extends BaseAdapter{
+  ...
+}
+mAdapter = new MyAdapter(resId);
+mCardView.setAdapter(mAdapter);
+```
 ### Animation transformers and interpolators
 #### Default
 If you just use all default animations, just do nothing.
