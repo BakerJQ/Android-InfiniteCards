@@ -32,7 +32,7 @@ compile 'com.bakerj:infinite-cards:1.0.0'
         infiniteCard:cardRatio="1"/>
 
 ```
-###Set Adapter
+### Set Adapter
 Just extends the BaseAdapter
 ```java
 class MyAdapter extends BaseAdapter{
