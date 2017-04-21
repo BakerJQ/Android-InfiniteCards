@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 An infinite card switching UI for Android, support custom animation
+可自定义动效的卡片切换视图[中文文档](./README_cn.md)
 
 ## Screenshot
 ![](./screenshot/sample.gif)
@@ -90,7 +91,7 @@ mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
     }
 });
 ```
-### *License*
+## *License*
 
 InfiniteCards is released under the [Apache 2.0 license](license.txt).
 
