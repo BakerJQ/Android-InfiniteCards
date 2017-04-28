@@ -7,11 +7,10 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 
 import com.bakerj.infinitecards.lib.R;
 
@@ -19,7 +18,7 @@ import com.bakerj.infinitecards.lib.R;
  * @author BakerJ
  *         https://github.com/BakerJQ/InfiniteCards
  */
-public class InfiniteCardView extends FrameLayout {
+public class InfiniteCardView extends ViewGroup {
     /*
      * Three types of animation
      * ANIM_TYPE_FRONT:custom animation for chosen card, common animation for other cards
@@ -74,7 +73,24 @@ public class InfiniteCardView extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
+        measureChildren(widthMeasureSpec, heightMeasureSpec);
+        if (widthMode != MeasureSpec.EXACTLY || heightMode != MeasureSpec.EXACTLY) {
+            int childCount = getChildCount();
+            int childWidth = 0, childHeight = 0;
+            for (int i = 0; i < childCount; i++) {
+                View childView = getChildAt(i);
+                childWidth = Math.max(childView.getMeasuredWidth(), childWidth);
+                childHeight = Math.max(childView.getMeasuredHeight(), childHeight);
+            }
+            setMeasuredDimension((widthMode == MeasureSpec.EXACTLY) ? sizeWidth : childWidth,
+                    (heightMode == MeasureSpec.EXACTLY) ? sizeHeight : childHeight);
+        } else {
+            setMeasuredDimension(sizeWidth, sizeHeight);
+        }
         if (mCardWidth == 0 || mCardHeight == 0) {
             setCardSize(true);
         }
@@ -87,6 +103,24 @@ public class InfiniteCardView extends FrameLayout {
         mAnimationHelper.initAdapterView(mAdapter, resetAdapter);
     }
 
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        int childCount = getChildCount();
+        int childWidth, childHeight;
+        int childLeft, childTop, childRight, childBottom;
+        int width = getWidth(), height = getHeight();
+        for (int i = 0; i < childCount; i++) {
+            View childView = getChildAt(i);
+            childWidth = childView.getMeasuredWidth();
+            childHeight = childView.getMeasuredHeight();
+            childLeft = (width - childWidth) / 2;
+            childTop = (height - childHeight) / 2;
+            childRight = childLeft + childWidth;
+            childBottom = childTop + childHeight;
+            childView.layout(childLeft, childTop, childRight, childBottom);
+        }
+    }
+
     void addCardView(CardItem card) {
         addView(getCardView(card));
     }
@@ -97,9 +131,8 @@ public class InfiniteCardView extends FrameLayout {
 
     private View getCardView(final CardItem card) {
         View view = card.view;
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(mCardWidth,
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(mCardWidth,
                 mCardHeight);
-        layoutParams.gravity = Gravity.CENTER;
         view.setLayoutParams(layoutParams);
         view.setOnClickListener(new OnClickListener() {
             @Override
