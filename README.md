@@ -9,7 +9,7 @@ An infinite card switching UI for Android, support custom animation
 
 ## Gradle via JCenter
 ``` groovy
-compile 'com.bakerj:infinite-cards:1.0.0'
+compile 'com.bakerj:infinite-cards:1.0.1'
 ```
 
 ## Attrs
