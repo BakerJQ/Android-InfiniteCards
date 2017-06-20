@@ -4,7 +4,7 @@
 可自定义动效的卡片切换视图
 
 ## 截屏
-![](https://github.com/BakerJQ/Android-InfiniteCards/blob/master/screenshot/sample.gif)
+![](./screenshot/sample.gif)
 
 ## Gradle引用
 ``` groovy
