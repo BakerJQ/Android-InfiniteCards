@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 import com.bakerj.infinitecards.transformer.DefaultCommonTransformer;
 import com.bakerj.infinitecards.transformer.DefaultTransformerToBack;
@@ -31,6 +32,17 @@ public class MainActivity extends AppCompatActivity {
         mAdapter1 = new MyAdapter(resId);
         mAdapter2 = new MyAdapter(resId);
         mCardView.setAdapter(mAdapter1);
+        mCardView.setCardAnimationListener(new InfiniteCardView.CardAnimationListener() {
+            @Override
+            public void onAnimationStart() {
+                Toast.makeText(MainActivity.this, "Animation Start", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAnimationEnd() {
+                Toast.makeText(MainActivity.this, "Animation End", Toast.LENGTH_SHORT).show();
+            }
+        });
         initButton();
     }
 

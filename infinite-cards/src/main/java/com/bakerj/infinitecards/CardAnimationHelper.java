@@ -60,6 +60,8 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     private BaseAdapter mTempAdapter;
     //current animation fraction
     private float mCurrentFraction = 1;
+    //animation listener
+    private InfiniteCardView.CardAnimationListener mCardAnimationListener;
 
     CardAnimationHelper(int mAnimType, int mAnimDuration, InfiniteCardView infiniteCardView) {
         this.mAnimType = mAnimType;
@@ -305,6 +307,9 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     @Override
     public void onAnimationStart(Animator animation) {
         mCurrentFraction = 0;
+        if (mCardAnimationListener != null) {
+            mCardAnimationListener.onAnimationStart();
+        }
     }
 
     /**
@@ -337,6 +342,9 @@ class CardAnimationHelper implements Animator.AnimatorListener,
         mIsAnim = false;
         if (mTempAdapter != null) {
             notifyDataSetChanged(mTempAdapter);
+        }
+        if (mCardAnimationListener != null) {
+            mCardAnimationListener.onAnimationEnd();
         }
     }
 
@@ -597,104 +605,108 @@ class CardAnimationHelper implements Animator.AnimatorListener,
     }
 
     void setTransformerToFront(AnimationTransformer toFrontTransformer) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mTransformerToFront = toFrontTransformer;
     }
 
     void setTransformerToBack(AnimationTransformer toBackTransformer) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mTransformerToBack = toBackTransformer;
     }
 
     void setCommonSwitchTransformer(AnimationTransformer commonTransformer) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mTransformerCommon = commonTransformer;
     }
 
     void setTransformerCommon(AnimationTransformer transformerCommon) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mTransformerCommon = transformerCommon;
     }
 
     void setZIndexTransformerToFront(ZIndexTransformer zIndexTransformerToFront) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mZIndexTransformerToFront = zIndexTransformerToFront;
     }
 
     void setZIndexTransformerToBack(ZIndexTransformer zIndexTransformerToBack) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mZIndexTransformerToBack = zIndexTransformerToBack;
     }
 
     void setZIndexTransformerCommon(ZIndexTransformer zIndexTransformerCommon) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mZIndexTransformerCommon = zIndexTransformerCommon;
     }
 
     void setAnimInterpolator(Interpolator animInterpolator) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mAnimInterpolator = animInterpolator;
     }
 
     void setAnimType(int animType) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mAnimType = animType;
     }
 
     void setTransformerAnimAdd(AnimationTransformer transformerAnimAdd) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mTransformerAnimAdd = transformerAnimAdd;
     }
 
     void setTransformerAnimRemove(AnimationTransformer transformerAnimRemove) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mTransformerAnimRemove = transformerAnimRemove;
     }
 
     void setAnimAddRemoveInterpolator(Interpolator animAddRemoveInterpolator) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mAnimAddRemoveInterpolator = animAddRemoveInterpolator;
     }
 
     void setAnimAddRemoveDelay(int animAddRemoveDelay) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mAnimAddRemoveDelay = animAddRemoveDelay;
     }
 
     void setAnimAddRemoveDuration(int animAddRemoveDuration) {
-        if(mIsAnim || mIsAddRemoveAnim){
+        if (mIsAnim || mIsAddRemoveAnim) {
             return;
         }
         this.mAnimAddRemoveDuration = animAddRemoveDuration;
     }
 
-    boolean isAnimating(){
+    boolean isAnimating() {
         return mIsAnim || mIsAddRemoveAnim;
+    }
+
+    void setCardAnimationListener(InfiniteCardView.CardAnimationListener cardAnimationListener) {
+        this.mCardAnimationListener = cardAnimationListener;
     }
 }

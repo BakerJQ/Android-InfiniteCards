@@ -231,4 +231,13 @@ public class InfiniteCardView extends ViewGroup {
     public boolean isAnimating() {
         return mAnimationHelper.isAnimating();
     }
+
+    public void setCardAnimationListener(CardAnimationListener cardAnimationListener){
+        mAnimationHelper.setCardAnimationListener(cardAnimationListener);
+    }
+
+    public static interface CardAnimationListener{
+        void onAnimationStart();
+        void onAnimationEnd();
+    }
 }
