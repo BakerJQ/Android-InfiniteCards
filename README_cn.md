@@ -3,6 +3,8 @@
 
 可自定义动效的卡片切换视图
 
+实现思路：http://bakerjq.com/2017/05/28/20170528_InfiniteCard/
+
 ## 截屏
 ![](./screenshot/sample.gif)
 
