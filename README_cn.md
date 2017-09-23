@@ -10,7 +10,7 @@
 
 ## Gradle引用
 ``` groovy
-compile 'com.bakerj:infinite-cards:1.0.1'
+compile 'com.bakerj:infinite-cards:1.0.3'
 ```
 
 ## 参数

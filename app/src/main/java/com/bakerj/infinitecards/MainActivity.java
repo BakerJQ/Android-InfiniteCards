@@ -1,7 +1,6 @@
 package com.bakerj.infinitecards;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.bakerj.infinitecards.transformer.DefaultCommonTransformer;
 import com.bakerj.infinitecards.transformer.DefaultTransformerToBack;
 import com.bakerj.infinitecards.transformer.DefaultTransformerToFront;
 import com.bakerj.infinitecards.transformer.DefaultZIndexTransformerCommon;
-import com.nineoldandroids.view.ViewHelper;
 
 public class MainActivity extends AppCompatActivity {
     private InfiniteCardView mCardView;
@@ -28,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mCardView = (InfiniteCardView) findViewById(R.id.view);
+        mCardView = findViewById(R.id.view);
         mAdapter1 = new MyAdapter(resId);
         mAdapter2 = new MyAdapter(resId);
         mCardView.setAdapter(mAdapter1);
@@ -107,12 +105,12 @@ public class MainActivity extends AppCompatActivity {
             public void transformAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 int positionCount = fromPosition - toPosition;
                 float scale = (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount);
-                ViewHelper.setScaleX(view, scale);
-                ViewHelper.setScaleY(view, scale);
+                view.setScaleX(scale);
+                view.setScaleY(scale);
                 if (fraction < 0.5) {
-                    ViewCompat.setRotationX(view, 180 * fraction);
+                    view.setRotationX(180 * fraction);
                 } else {
-                    ViewCompat.setRotationX(view, 180 * (1 - fraction));
+                    view.setRotationX(180 * (1 - fraction));
                 }
             }
 
@@ -120,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 int positionCount = fromPosition - toPosition;
                 float scale = (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount);
-                ViewHelper.setTranslationY(view, -cardHeight * (0.8f - scale) * 0.5f - cardWidth * (0.02f *
+                view.setTranslationY(-cardHeight * (0.8f - scale) * 0.5f - cardWidth * (0.02f *
                         fromPosition - 0.02f * fraction * positionCount));
             }
         });
@@ -151,14 +149,14 @@ public class MainActivity extends AppCompatActivity {
             public void transformAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 int positionCount = fromPosition - toPosition;
                 float scale = (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount);
-                ViewHelper.setScaleX(view, scale);
-                ViewHelper.setScaleY(view, scale);
+                view.setScaleX(scale);
+                view.setScaleY(scale);
                 if (fraction < 0.5) {
-                    ViewCompat.setTranslationX(view, cardWidth * fraction * 1.5f);
-                    ViewCompat.setRotationY(view, -45 * fraction);
+                    view.setTranslationX(cardWidth * fraction * 1.5f);
+                    view.setRotationY(-45 * fraction);
                 } else {
-                    ViewCompat.setTranslationX(view, cardWidth * 1.5f * (1f - fraction));
-                    ViewCompat.setRotationY(view, -45 * (1 - fraction));
+                    view.setTranslationX(cardWidth * 1.5f * (1f - fraction));
+                    view.setRotationY(-45 * (1 - fraction));
                 }
             }
 
@@ -166,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
                 int positionCount = fromPosition - toPosition;
                 float scale = (0.8f - 0.1f * fromPosition) + (0.1f * fraction * positionCount);
-                ViewHelper.setTranslationY(view, -cardHeight * (0.8f - scale) * 0.5f - cardWidth * (0.02f *
+                view.setTranslationY(-cardHeight * (0.8f - scale) * 0.5f - cardWidth * (0.02f *
                         fromPosition - 0.02f * fraction * positionCount));
             }
         });
