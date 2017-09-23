@@ -1,5 +1,7 @@
 package com.bakerj.infinitecards;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -12,8 +14,6 @@ import com.bakerj.infinitecards.transformer.DefaultTransformerToBack;
 import com.bakerj.infinitecards.transformer.DefaultTransformerToFront;
 import com.bakerj.infinitecards.transformer.DefaultZIndexTransformerCommon;
 import com.bakerj.infinitecards.transformer.DefaultZIndexTransformerToFront;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ValueAnimator;
 
 import java.util.LinkedList;
 
