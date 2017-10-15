@@ -95,7 +95,7 @@ mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
 ```
 ## *License*
 
-InfiniteCards is released under the [Apache 2.0 license](license.txt).
+InfiniteCards is released under the Apache 2.0 license.
 
 ```
 Copyright 2017 BakerJ.
