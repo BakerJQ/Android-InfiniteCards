@@ -9,8 +9,20 @@
 ![](./screenshot/sample.gif)
 
 ## Gradle引用
+根build.gradle添加：
 ``` groovy
-compile 'com.bakerj:infinite-cards:1.0.3'
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+app的build.gradle添加：
+``` groovy
+dependencies {
+    implementation 'com.github.BakerJQ:Android-InfiniteCards:1.0.4'
+}
 ```
 
 ## 参数

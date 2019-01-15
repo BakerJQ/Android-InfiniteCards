@@ -7,9 +7,21 @@ An infinite card switching UI for Android, support custom animation
 ## Screenshot
 ![](https://raw.githubusercontent.com/BakerJQ/Android-InfiniteCards/master/screenshot/sample.gif)
 
-## Gradle via JCenter
+## Gradle via JitPack
+Add it in your root build.gradle at the end of repositories:
 ``` groovy
-compile 'com.bakerj:infinite-cards:1.0.3'
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+Add the dependency
+``` groovy
+dependencies {
+    implementation 'com.github.BakerJQ:Android-InfiniteCards:1.0.4'
+}
 ```
 
 ## Attrs
