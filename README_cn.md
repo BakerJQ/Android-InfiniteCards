@@ -6,6 +6,9 @@
 
 实现思路：http://bakerjq.com/2017/05/28/20170528_InfiniteCard/
 
+## Flutter版本
+https://github.com/BakerJQ/Flutter-InfiniteCards
+
 ## 截屏
 ![](./screenshot/sample.gif)
 
