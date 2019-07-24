@@ -211,15 +211,15 @@ public class InfiniteCardView extends ViewGroup {
         mAnimationHelper.setAnimType(animType);
     }
 
-    void setTransformerAnimAdd(AnimationTransformer transformerAnimAdd) {
+    public void setTransformerAnimAdd(AnimationTransformer transformerAnimAdd) {
         mAnimationHelper.setTransformerAnimAdd(transformerAnimAdd);
     }
 
-    void setTransformerAnimRemove(AnimationTransformer transformerAnimRemove) {
+    public void setTransformerAnimRemove(AnimationTransformer transformerAnimRemove) {
         mAnimationHelper.setTransformerAnimRemove(transformerAnimRemove);
     }
 
-    void setAnimAddRemoveInterpolator(Interpolator animAddRemoveInterpolator) {
+    public void setAnimAddRemoveInterpolator(Interpolator animAddRemoveInterpolator) {
         mAnimationHelper.setAnimAddRemoveInterpolator(animAddRemoveInterpolator);
     }
 

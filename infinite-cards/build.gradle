@@ -14,7 +14,7 @@ ext {
     siteUrl = 'https://github.com/BakerJQ/Android-InfiniteCards'
     gitUrl = 'https://github.com/BakerJQ/Android-InfiniteCards.git'
 
-    libraryVersion = '1.0.3'
+    libraryVersion = '1.0.5'
 
     developerId = 'bakerj'
     developerName = 'BakerJ'
