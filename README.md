@@ -24,7 +24,7 @@ allprojects {
 Add the dependency
 ``` groovy
 dependencies {
-    implementation 'com.github.BakerJQ:Android-InfiniteCards:1.0.4'
+    implementation 'com.github.BakerJQ:Android-InfiniteCards:1.0.5'
 }
 ```
 

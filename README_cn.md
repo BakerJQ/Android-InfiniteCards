@@ -25,7 +25,7 @@ allprojects {
 app的build.gradle添加：
 ``` groovy
 dependencies {
-    implementation 'com.github.BakerJQ:Android-InfiniteCards:1.0.4'
+    implementation 'com.github.BakerJQ:Android-InfiniteCards:1.0.5'
 }
 ```
 
