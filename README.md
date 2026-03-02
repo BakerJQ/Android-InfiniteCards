@@ -38,8 +38,8 @@ dependencies {
 - animAddRemoveDelay : delay of animation of add and remove between each card
 - animAddRemoveDuration : duration of add and remove each card's animation
 
-## How to use
-### layout in xml
+## How to use it
+### layout in XML
 ```xml
 <com.bakerj.infinitecards.InfiniteCardView
         android:id="@+id/view"
@@ -82,7 +82,6 @@ mCardView.setTransformerToBack(new AnimationTransformer() {
             ViewCompat.setRotationX(view, 180 * (1 - fraction));
         }
     }
-
     @Override
     public void transformInterpolatedAnimation(View view, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
         int positionCount = fromPosition - toPosition;
@@ -100,7 +99,6 @@ mCardView.setZIndexTransformerToBack(new ZIndexTransformer() {
             card.zIndex = 1f + 0.01f * toPosition;
         }
     }
-
     @Override
     public void transformInterpolatedAnimation(CardItem card, float fraction, int cardWidth, int cardHeight, int fromPosition, int toPosition) {
 
